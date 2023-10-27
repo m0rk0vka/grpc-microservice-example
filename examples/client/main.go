@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	userpb "github.com/m0rk0vka/grpc/gen/go/user/v1"
+	userpb "github.com/m0rk0vka/grpc-microservice-example/gen/go/user/v1"
 )
 
 func main() {

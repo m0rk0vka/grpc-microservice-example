@@ -6,5 +6,3 @@ plugins:
   - name: go-grpc
     out: gen/go
     opt: paths=source_relative
-  - name: ruby
-    out: gen/ruby
