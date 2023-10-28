@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WearableServiceClient interface {
 	BeatsPerSecond(ctx context.Context, in *BeatsPerSecondRequest, opts ...grpc.CallOption) (WearableService_BeatsPerSecondClient, error)
+	ConsumerBeatPerSecond(ctx context.Context, opts ...grpc.CallOption) (WearableService_ConsumerBeatPerSecondClient, error)
+	CalculatedBeatsPerSecond(ctx context.Context, opts ...grpc.CallOption) (WearableService_CalculatedBeatsPerSecondClient, error)
 }
 
 type wearableServiceClient struct {
@@ -65,11 +67,78 @@ func (x *wearableServiceBeatsPerSecondClient) Recv() (*BeatsPerSecondResponse, e
 	return m, nil
 }
 
+func (c *wearableServiceClient) ConsumerBeatPerSecond(ctx context.Context, opts ...grpc.CallOption) (WearableService_ConsumerBeatPerSecondClient, error) {
+	stream, err := c.cc.NewStream(ctx, &WearableService_ServiceDesc.Streams[1], "/wearable.v1.WearableService/ConsumerBeatPerSecond", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &wearableServiceConsumerBeatPerSecondClient{stream}
+	return x, nil
+}
+
+type WearableService_ConsumerBeatPerSecondClient interface {
+	Send(*ConsumerBeatPerSecondRequest) error
+	CloseAndRecv() (*ConsumerBeatPerSecondResponse, error)
+	grpc.ClientStream
+}
+
+type wearableServiceConsumerBeatPerSecondClient struct {
+	grpc.ClientStream
+}
+
+func (x *wearableServiceConsumerBeatPerSecondClient) Send(m *ConsumerBeatPerSecondRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *wearableServiceConsumerBeatPerSecondClient) CloseAndRecv() (*ConsumerBeatPerSecondResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(ConsumerBeatPerSecondResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *wearableServiceClient) CalculatedBeatsPerSecond(ctx context.Context, opts ...grpc.CallOption) (WearableService_CalculatedBeatsPerSecondClient, error) {
+	stream, err := c.cc.NewStream(ctx, &WearableService_ServiceDesc.Streams[2], "/wearable.v1.WearableService/CalculatedBeatsPerSecond", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &wearableServiceCalculatedBeatsPerSecondClient{stream}
+	return x, nil
+}
+
+type WearableService_CalculatedBeatsPerSecondClient interface {
+	Send(*CalculatedBeatsPerSecondRequest) error
+	Recv() (*CalculatedBeatsPerSecondResponse, error)
+	grpc.ClientStream
+}
+
+type wearableServiceCalculatedBeatsPerSecondClient struct {
+	grpc.ClientStream
+}
+
+func (x *wearableServiceCalculatedBeatsPerSecondClient) Send(m *CalculatedBeatsPerSecondRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *wearableServiceCalculatedBeatsPerSecondClient) Recv() (*CalculatedBeatsPerSecondResponse, error) {
+	m := new(CalculatedBeatsPerSecondResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // WearableServiceServer is the server API for WearableService service.
 // All implementations must embed UnimplementedWearableServiceServer
 // for forward compatibility
 type WearableServiceServer interface {
 	BeatsPerSecond(*BeatsPerSecondRequest, WearableService_BeatsPerSecondServer) error
+	ConsumerBeatPerSecond(WearableService_ConsumerBeatPerSecondServer) error
+	CalculatedBeatsPerSecond(WearableService_CalculatedBeatsPerSecondServer) error
 	mustEmbedUnimplementedWearableServiceServer()
 }
 
@@ -79,6 +148,12 @@ type UnimplementedWearableServiceServer struct {
 
 func (UnimplementedWearableServiceServer) BeatsPerSecond(*BeatsPerSecondRequest, WearableService_BeatsPerSecondServer) error {
 	return status.Errorf(codes.Unimplemented, "method BeatsPerSecond not implemented")
+}
+func (UnimplementedWearableServiceServer) ConsumerBeatPerSecond(WearableService_ConsumerBeatPerSecondServer) error {
+	return status.Errorf(codes.Unimplemented, "method ConsumerBeatPerSecond not implemented")
+}
+func (UnimplementedWearableServiceServer) CalculatedBeatsPerSecond(WearableService_CalculatedBeatsPerSecondServer) error {
+	return status.Errorf(codes.Unimplemented, "method CalculatedBeatsPerSecond not implemented")
 }
 func (UnimplementedWearableServiceServer) mustEmbedUnimplementedWearableServiceServer() {}
 
@@ -114,6 +189,58 @@ func (x *wearableServiceBeatsPerSecondServer) Send(m *BeatsPerSecondResponse) er
 	return x.ServerStream.SendMsg(m)
 }
 
+func _WearableService_ConsumerBeatPerSecond_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(WearableServiceServer).ConsumerBeatPerSecond(&wearableServiceConsumerBeatPerSecondServer{stream})
+}
+
+type WearableService_ConsumerBeatPerSecondServer interface {
+	SendAndClose(*ConsumerBeatPerSecondResponse) error
+	Recv() (*ConsumerBeatPerSecondRequest, error)
+	grpc.ServerStream
+}
+
+type wearableServiceConsumerBeatPerSecondServer struct {
+	grpc.ServerStream
+}
+
+func (x *wearableServiceConsumerBeatPerSecondServer) SendAndClose(m *ConsumerBeatPerSecondResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *wearableServiceConsumerBeatPerSecondServer) Recv() (*ConsumerBeatPerSecondRequest, error) {
+	m := new(ConsumerBeatPerSecondRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _WearableService_CalculatedBeatsPerSecond_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(WearableServiceServer).CalculatedBeatsPerSecond(&wearableServiceCalculatedBeatsPerSecondServer{stream})
+}
+
+type WearableService_CalculatedBeatsPerSecondServer interface {
+	Send(*CalculatedBeatsPerSecondResponse) error
+	Recv() (*CalculatedBeatsPerSecondRequest, error)
+	grpc.ServerStream
+}
+
+type wearableServiceCalculatedBeatsPerSecondServer struct {
+	grpc.ServerStream
+}
+
+func (x *wearableServiceCalculatedBeatsPerSecondServer) Send(m *CalculatedBeatsPerSecondResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *wearableServiceCalculatedBeatsPerSecondServer) Recv() (*CalculatedBeatsPerSecondRequest, error) {
+	m := new(CalculatedBeatsPerSecondRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // WearableService_ServiceDesc is the grpc.ServiceDesc for WearableService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -126,6 +253,17 @@ var WearableService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "BeatsPerSecond",
 			Handler:       _WearableService_BeatsPerSecond_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "ConsumerBeatPerSecond",
+			Handler:       _WearableService_ConsumerBeatPerSecond_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "CalculatedBeatsPerSecond",
+			Handler:       _WearableService_CalculatedBeatsPerSecond_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "wearable/v1/wearable_service.proto",
